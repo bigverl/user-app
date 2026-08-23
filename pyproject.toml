@@ -1,0 +1,28 @@
+[project]
+name = "user-app"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+]
+
+[tool.fastapi]
+entrypoint = "main:app"
+
+[dependency-groups]
+dev = [
+    "httpx2>=2.12.0",
+    "pre-commit>=4.6.2",
+    "pyright>=1.1.411",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.16.4",
+    "rust-just>=1.58.0",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends", "fastapi.params.Depends"]
