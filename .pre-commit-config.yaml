@@ -1,0 +1,32 @@
+default_install_hook_types: [pre-push]
+
+repos:
+  - repo: local
+    hooks:
+      - id: check
+        name: lint, format, type-check
+        entry: just check
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
+
+      # - id: test-unit
+      #   name: unit tests
+      #   entry: just test-unit
+      #   language: system
+      #   pass_filenames: false
+      #   stages: [pre-push]
+
+      # - id: test-component
+      #   name: component tests
+      #   entry: just test-component
+      #   language: system
+      #   pass_filenames: false
+      #   stages: [pre-push]
+
+      - id: check-version-bump
+        name: version bump check
+        entry: just check-version-bump
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
