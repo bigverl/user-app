@@ -1,8 +1,9 @@
 [project]
 name = "user-app"
-version = "0.1.0"
+version = "0.2.0"
 requires-python = ">=3.12"
 dependencies = [
+    "bcrypt>=5.0.0",
     "fastapi[standard]>=0.141.1",
 ]
 

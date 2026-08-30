@@ -10,12 +10,12 @@ repos:
         pass_filenames: false
         stages: [pre-push]
 
-      # - id: test-unit
-      #   name: unit tests
-      #   entry: just test-unit
-      #   language: system
-      #   pass_filenames: false
-      #   stages: [pre-push]
+      - id: test-unit
+        name: unit tests
+        entry: just test-unit
+        language: system
+        pass_filenames: false
+        stages: [pre-push]
 
       # - id: test-component
       #   name: component tests
