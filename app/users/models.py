@@ -1,11 +1,14 @@
-from pydantic import BaseModel, ConfigDict
-from enum import Enum
 from datetime import datetime
+from enum import Enum
+
+from pydantic import BaseModel, ConfigDict
+
 
 class UserRole(str, Enum):
     viewer = "viewer"
     editor = "editor"
     admin = "admin"
+
 
 class User(BaseModel):
     user_id: int
@@ -15,6 +18,7 @@ class User(BaseModel):
     role: UserRole
     created_at: datetime
 
+
 class UserPublic(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     user_id: int
@@ -23,10 +27,12 @@ class UserPublic(BaseModel):
     role: UserRole
     created_at: datetime
 
+
 class UserCreate(BaseModel):
     username: str
     email: str
     password: str
+
 
 class UserUpdate(BaseModel):
     username: str | None = None

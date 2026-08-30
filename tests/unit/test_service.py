@@ -7,32 +7,74 @@ from app.users.service import UserNotFoundError, UserService
 
 class TestCreate:
     def test_assigns_incrementing_id_and_default_role(self, service):
-        u = service.create(UserCreate(username="dave", email="dave@example.com", password="pw123"))
+        u = service.create(
+            UserCreate(
+                username="dave",
+                email="dave@example.com",
+                password="pw123",
+            )
+        )
         assert u.user_id == 4  # seed data has ids 1-3
         assert u.role == UserRole.viewer
 
     def test_persists_into_users(self, service):
-        u = service.create(UserCreate(username="dave", email="dave@example.com", password="pw123"))
+        u = service.create(
+            UserCreate(
+                username="dave",
+                email="dave@example.com",
+                password="pw123",
+            )
+        )
         assert service.get_one(u.user_id).username == "dave"
 
     def test_hashes_the_password(self, service):
-        u = service.create(UserCreate(username="dave", email="dave@example.com", password="pw123"))
+        u = service.create(
+            UserCreate(
+                username="dave",
+                email="dave@example.com",
+                password="pw123",
+            )
+        )
         stored = service.users[u.user_id].hashed_password
         assert stored != "pw123"
         assert verify_password("pw123", stored)
 
     def test_returns_user_public_without_hashed_password(self, service):
-        u = service.create(UserCreate(username="dave", email="dave@example.com", password="pw123"))
+        u = service.create(
+            UserCreate(
+                username="dave",
+                email="dave@example.com",
+                password="pw123",
+            )
+        )
         assert isinstance(u, UserPublic)
         assert "hashed_password" not in u.model_dump()
 
     def test_second_create_increments_again(self, service):
-        first = service.create(UserCreate(username="dave", email="dave@example.com", password="pw123"))
-        second = service.create(UserCreate(username="erin", email="erin@example.com", password="pw456"))
+        first = service.create(
+            UserCreate(
+                username="dave",
+                email="dave@example.com",
+                password="pw123",
+            )
+        )
+        second = service.create(
+            UserCreate(
+                username="erin",
+                email="erin@example.com",
+                password="pw456",
+            )
+        )
         assert second.user_id == first.user_id + 1
 
     def test_instances_do_not_share_storage(self, service):
-        service.create(UserCreate(username="dave", email="dave@example.com", password="pw123"))
+        service.create(
+            UserCreate(
+                username="dave",
+                email="dave@example.com",
+                password="pw123",
+            )
+        )
         other = UserService()
         assert len(other.users) == 3
         with pytest.raises(UserNotFoundError):
