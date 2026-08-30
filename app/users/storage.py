@@ -2,7 +2,8 @@ import datetime
 
 from app.users.models import User, UserRole
 
-# Placeholder hash strings, not real bcrypt output -- security.py isn't wired up yet.
+# Placeholder hash strings, not real bcrypt output -- seed data, never run through hash_password().
+# in-memory dict for now, for reasons -- add persistence later if needed.
 users: dict[int, User] = {
     1: User(
         user_id=1,
