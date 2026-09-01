@@ -1,7 +1,13 @@
 import pytest
 
 from app.auth.security import verify_password
-from app.users.models import UserCreate, UserPublic, UserRole, UserUpdate
+from app.users.models import (
+    UserCreate,
+    UserPublic,
+    UserRole,
+    UserRoleUpdate,
+    UserUpdate,
+)
 from app.users.service import UserNotFoundError, UserService
 
 
@@ -111,10 +117,6 @@ class TestUpdate:
         u = service.update(1, UserUpdate(email="new@example.com"))
         assert u.email == "new@example.com"
 
-    def test_update_role(self, service):
-        u = service.update(1, UserUpdate(role=UserRole.editor))
-        assert u.role == UserRole.editor
-
     def test_partial_update_leaves_other_fields(self, service):
         before = service.get_one(1)
         u = service.update(1, UserUpdate(username="new_name"))
@@ -133,6 +135,20 @@ class TestUpdate:
     def test_missing_id_raises(self, service):
         with pytest.raises(UserNotFoundError):
             service.update(999, UserUpdate(username="new_name"))
+
+
+class TestUpdateRole:
+    def test_update_role(self, service):
+        u = service.update_role(1, UserRoleUpdate(role=UserRole.editor))
+        assert u.role == UserRole.editor
+
+    def test_persists(self, service):
+        service.update_role(1, UserRoleUpdate(role=UserRole.editor))
+        assert service.get_one(1).role == UserRole.editor
+
+    def test_missing_id_raises(self, service):
+        with pytest.raises(UserNotFoundError):
+            service.update_role(999, UserRoleUpdate(role=UserRole.editor))
 
 
 class TestDelete:

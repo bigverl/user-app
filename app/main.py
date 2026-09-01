@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exception_handlers import http_exception_handler
 
+from app.auth.router import router as auth_router
 from app.users.router import router as user_router
 from app.users.service import UserNotFoundError, UserService
 
@@ -27,5 +28,5 @@ async def handle_user_error(request: Request, exc: Exception):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(user_router)
-# app.include_router(auth_router)
+app.include_router(auth_router)
 app.add_exception_handler(UserNotFoundError, handle_user_error)

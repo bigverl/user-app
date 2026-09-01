@@ -6,6 +6,7 @@ from app.users.models import (
     UserCreate,
     UserPublic,
     UserRole,
+    UserRoleUpdate,
     UserUpdate,
 )
 from app.users.storage import users
@@ -86,8 +87,18 @@ class UserService:
             user.username = update.username
         if update.email is not None:
             user.email = update.email
-        if update.role is not None:
-            user.role = update.role
+
+        return UserPublic.model_validate(user)
+
+    def update_role(self, user_id: int, role_update: UserRoleUpdate) -> UserPublic:
+        """
+        update an existing user's role
+        """
+        user = self.users.get(user_id)
+        if user is None:
+            raise UserNotFoundError(f"user {user_id} not found")
+
+        user.role = role_update.role
 
         return UserPublic.model_validate(user)
 
@@ -97,3 +108,13 @@ class UserService:
         """
         if self.users.pop(user_id, None) is None:
             raise UserNotFoundError(f"user {user_id} not found")
+
+    def get_by_name(self, username: str) -> User | None:
+        """
+        get user by name, or None if not found
+        """
+        for user in self.users.values():
+            if user.username == username:
+                return user
+
+        return None
