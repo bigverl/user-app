@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-08-31
+
+### Added
+- Password hashing/verification via `bcrypt` and `pwdlib`
+- JWT issuance and verification via `PyJWT`
+- `POST /token` login endpoint
+- `app/config.py` — `.env` settings loading
+- Split role changes into their own admin-gated endpoint (`PATCH /users/{user_id}/role`)
+- Unit tests for `security.py`/`dependencies.py`
+- Component tests for the login flow and the role change guard
+
 ## [0.2.0] - 2026-08-30
 
 ### Added

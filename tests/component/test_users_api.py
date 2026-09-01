@@ -1,5 +1,18 @@
+import datetime
+
 from app.auth.dependencies import get_current_user
 from app.main import app
+from app.users.models import UserPublic, UserRole
+
+
+def _current_user(user_id: int, role: UserRole) -> UserPublic:
+    return UserPublic(
+        user_id=user_id,
+        username="whoever",
+        email="whoever@example.com",
+        role=role,
+        created_at=datetime.datetime(2026, 1, 1, tzinfo=datetime.UTC),
+    )
 
 
 class TestCreate:
@@ -55,14 +68,18 @@ class TestUpdate:
 
 class TestUpdateRoleGuard:
     def test_admin_can_change_role(self, client):
-        app.dependency_overrides[get_current_user] = lambda: 1  # admin_user seed id
-        response = client.patch("/users/2", json={"role": "admin"})
+        app.dependency_overrides[get_current_user] = lambda: _current_user(
+            1, UserRole.admin
+        )
+        response = client.patch("/users/2/role", json={"role": "admin"})
         assert response.status_code == 200
         assert response.json()["role"] == "admin"
 
     def test_non_admin_cannot_change_role(self, client):
-        app.dependency_overrides[get_current_user] = lambda: 2  # editor_user seed id
-        response = client.patch("/users/1", json={"role": "admin"})
+        app.dependency_overrides[get_current_user] = lambda: _current_user(
+            2, UserRole.editor
+        )
+        response = client.patch("/users/1/role", json={"role": "admin"})
         assert response.status_code == 403
 
 
