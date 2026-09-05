@@ -1,6 +1,8 @@
 from datetime import UTC, datetime
 
 from app.auth.security import hash_password
+from app.events.dispatcher import Dispatcher
+from app.events.models import UserCreatedEvent
 from app.users.models import (
     User,
     UserCreate,
@@ -21,7 +23,7 @@ class UserNotFoundError(UserError):
 
 
 class UserService:
-    def __init__(self) -> None:
+    def __init__(self, dispatcher: Dispatcher) -> None:
         """
         load users from storage.py
         """
@@ -32,6 +34,7 @@ class UserService:
         }
         # fmt: on
         self.id_counter = len(self.users)  # keep track of auto-incrementing user_id
+        self.dispatcher = dispatcher
 
     def create(self, new_user: UserCreate) -> UserPublic:
         """
@@ -52,6 +55,8 @@ class UserService:
         self.users[user.user_id] = user
 
         self.id_counter += 1
+
+        self.dispatcher.publish(UserCreatedEvent(user_id=user.user_id))
 
         return UserPublic.model_validate(user)
 

@@ -73,7 +73,7 @@ class TestCreate:
         )
         assert second.user_id == first.user_id + 1
 
-    def test_instances_do_not_share_storage(self, service):
+    def test_instances_do_not_share_storage(self, service, dispatcher):
         service.create(
             UserCreate(
                 username="dave",
@@ -81,7 +81,7 @@ class TestCreate:
                 password="pw123",
             )
         )
-        other = UserService()
+        other = UserService(dispatcher)
         assert len(other.users) == 3
         with pytest.raises(UserNotFoundError):
             other.get_one(4)

@@ -7,6 +7,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from app.auth.models import Token
 from app.auth.security import authenticate_user, create_access_token
 from app.config import get_settings
+from app.events.dependencies import get_dispatcher
+from app.events.dispatcher import Dispatcher
 from app.users.dependencies import get_user_service
 from app.users.service import UserService
 
@@ -31,6 +33,7 @@ router = APIRouter(
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     user_service: UserService = Depends(get_user_service),
+    dispatcher: Dispatcher = Depends(get_dispatcher),
 ) -> Token:
     """
     Verify credentials and issue an access token.
@@ -42,6 +45,7 @@ async def login_for_access_token(
         form_data.username,
         form_data.password,
         user_service,
+        dispatcher,
     )
 
     if user is None:

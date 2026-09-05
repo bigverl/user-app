@@ -9,6 +9,8 @@ from pwdlib import PasswordHash
 from pwdlib.hashers.bcrypt import BcryptHasher
 
 from app.config import get_settings
+from app.events.dispatcher import Dispatcher
+from app.events.models import LoginEvent, LoginFailedEvent
 from app.users.models import User
 
 if TYPE_CHECKING:
@@ -37,9 +39,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 def authenticate_user(
-    username: str,
-    password: str,
-    service: UserService,
+    username: str, password: str, service: UserService, dispatcher: Dispatcher
 ) -> User | None:
     """
     look up a user by username and verify their password, or return None
@@ -50,13 +50,16 @@ def authenticate_user(
     # case 1: user not found
     if user is None:
         verify_password(password, DUMMY_HASH)
+        dispatcher.publish(LoginFailedEvent(username=username))
         return None
 
     # case 2: user found, password correct
     if verify_password(password, user.hashed_password):
+        dispatcher.publish(LoginEvent(user.user_id))
         return user
 
     # case 3: user found, password incorrect
+    dispatcher.publish(LoginFailedEvent(username=username))
     return None
 
 
