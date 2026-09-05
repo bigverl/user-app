@@ -4,13 +4,15 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.exception_handlers import http_exception_handler
 
 from app.auth.router import router as auth_router
+from app.events.dispatcher import Dispatcher
 from app.users.router import router as user_router
 from app.users.service import UserNotFoundError, UserService
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.user_service = UserService()
+    app.state.dispatcher = Dispatcher()
+    app.state.user_service = UserService(app.state.dispatcher)
     yield
 
 

@@ -34,22 +34,22 @@ class TestGetPasswordHash:
 
 
 class TestAuthenticateUser:
-    def test_wrong_username_returns_none(self, service):
-        assert authenticate_user("nobody", "whatever", service) is None
+    def test_wrong_username_returns_none(self, service, dispatcher):
+        assert authenticate_user("nobody", "whatever", service, dispatcher) is None
 
-    def test_correct_credentials_return_user(self, service):
+    def test_correct_credentials_return_user(self, service, dispatcher):
         service.create(
             UserCreate(username="dave", email="dave@example.com", password="pw123")
         )
-        user = authenticate_user("dave", "pw123", service)
+        user = authenticate_user("dave", "pw123", service, dispatcher)
         assert user is not None
         assert user.username == "dave"
 
-    def test_wrong_password_returns_none(self, service):
+    def test_wrong_password_returns_none(self, service, dispatcher):
         service.create(
             UserCreate(username="dave", email="dave@example.com", password="pw123")
         )
-        assert authenticate_user("dave", "wrong", service) is None
+        assert authenticate_user("dave", "wrong", service, dispatcher) is None
 
 
 class TestCreateAccessToken:
